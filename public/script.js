@@ -36,7 +36,8 @@ function generateBill() {
   //   phone: document.getElementById("custPhone").value,
   // }
   const customerName = document.getElementById("custName").value
-  const customerContact = document.getElementById("custPhone").value
+  const customerContact =
+    parseInt(document.getElementById("custPhone").value) || 0
   const items = []
   document.querySelectorAll("#itemTable tbody tr").forEach((row) => {
     const name = row.querySelector(".item-name").value
