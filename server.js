@@ -1,30 +1,53 @@
+const mongoose = require("mongoose")
+mongoose
+  .connect(
+    "mongodb+srv://billing_user:yourpassword123@cluster0.kmcymft.mongodb.net/billingDB?retryWrites=true&w=majority&appName=Cluster0",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err))
 
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const app = express();
-const PORT = 3000;
+const billSchema = new mongoose.Schema({
+  customerName: String,
+  customerContact: String,
+  items: Array,
+  subtotal: Number,
+  discount: Number,
+  tax: Number,
+  total: Number,
+  billNumber: String,
+  date: {type: Date, default: Date.now},
+})
 
-app.use(express.static('public'));
-app.use(express.json());
+const Bill = mongoose.model("Bill", billSchema)
 
-app.post('/api/bill', (req, res) => {
-  const bill = req.body;
-  const billsFile = path.join(__dirname, 'bills.json');
+const express = require("express")
+const app = express()
+const PORT = 3000
 
-  let bills = [];
-  if (fs.existsSync(billsFile)) {
-    bills = JSON.parse(fs.readFileSync(billsFile));
+app.use(express.static("public"))
+app.use(express.json())
+
+// ✅ New MongoDB-based route
+app.post("/api/bill", async (req, res) => {
+  try {
+    const bill = req.body
+    bill.billNumber = "INV-" + Date.now()
+    bill.date = new Date()
+
+    const newBill = new Bill(bill)
+    await newBill.save()
+
+    res.json({message: "✅ Bill saved!", billNumber: bill.billNumber})
+  } catch (err) {
+    console.error("❌ Failed to save bill:", err)
+    res.status(500).json({message: "Error saving bill"})
   }
-
-  bill.billNumber = "INV-" + Date.now();
-  bill.date = new Date().toISOString();
-  bills.push(bill);
-  fs.writeFileSync(billsFile, JSON.stringify(bills, null, 2));
-
-  res.json({ message: "Bill saved!", billNumber: bill.billNumber });
-});
+})
 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+  console.log(`Server running at http://localhost:${PORT}`)
+})
