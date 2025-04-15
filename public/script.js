@@ -31,8 +31,10 @@ function updateTotals() {
 }
 
 function generateBill() {
-  const customerName = document.getElementById("custName").value
-  const customerContact = document.getElementById("custPhone").value
+  const customer = {
+    name: document.getElementById("custName").value,
+    phone: document.getElementById("custPhone").value,
+  }
 
   const items = []
   document.querySelectorAll("#itemTable tbody tr").forEach((row) => {
@@ -43,8 +45,7 @@ function generateBill() {
   })
 
   const bill = {
-    customerName,
-    customerContact,
+    customer,
     items,
     subtotal: parseFloat(document.getElementById("subtotal").innerText),
     tax: parseFloat(document.getElementById("tax").innerText),
