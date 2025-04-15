@@ -31,11 +31,12 @@ function updateTotals() {
 }
 
 function generateBill() {
-  const customer = {
-    name: document.getElementById("custName").value,
-    phone: document.getElementById("custPhone").value,
-  }
-
+  // const customer = {
+  //   name: document.getElementById("custName").value,
+  //   phone: document.getElementById("custPhone").value,
+  // }
+  const customerName = document.getElementById("custName").value
+  const customerContact = document.getElementById("custPhone").value
   const items = []
   document.querySelectorAll("#itemTable tbody tr").forEach((row) => {
     const name = row.querySelector(".item-name").value
@@ -45,7 +46,8 @@ function generateBill() {
   })
 
   const bill = {
-    customer,
+    customerName,
+    customerContact,
     items,
     subtotal: parseFloat(document.getElementById("subtotal").innerText),
     tax: parseFloat(document.getElementById("tax").innerText),
