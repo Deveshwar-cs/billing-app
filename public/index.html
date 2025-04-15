@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Billing Software</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h2>Billing Form</h2>
+  <div>
+    <label>Customer Name:</label>
+    <input id="custName" type="text" />
+  </div>
+  <div>
+    <label>Phone:</label>
+    <input id="custPhone" type="text" />
+  </div>
+
+  <h3>Items</h3>
+  <table id="itemTable">
+    <thead>
+      <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input class="item-name" /></td>
+        <td><input class="item-qty" type="number" value="1" /></td>
+        <td><input class="item-price" type="number" value="0" /></td>
+        <td><span class="item-total">0</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <button onclick="addRow()">+ Add Item</button>
+
+  <div>
+    <label>Discount:</label>
+    <input id="discount" type="number" value="0" />
+  </div>
+
+  <h4>Subtotal: ₹<span id="subtotal">0</span></h4>
+  <h4>Tax (18%): ₹<span id="tax">0</span></h4>
+  <h2>Total: ₹<span id="total">0</span></h2>
+
+  <button onclick="generateBill()">Generate Bill</button>
+  <pre id="output"></pre>
+
+  <script src="script.js"></script>
+</body>
+</html>
