@@ -12,7 +12,7 @@ mongoose
 
 const billSchema = new mongoose.Schema({
   customerName: String,
-  customerContact: String,
+  customerContact: Number,
   items: Array,
   subtotal: Number,
   discount: Number,
