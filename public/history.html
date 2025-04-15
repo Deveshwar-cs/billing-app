@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bill History</title>
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #aaa;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #4caf50;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🧾 Bill History</h1>
+    <table id="billTable">
+      <thead>
+        <tr>
+          <th>Bill No.</th>
+          <th>Customer</th>
+          <th>Contact</th>
+          <th>Date</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      fetch("/api/bills")
+        .then((res) => res.json())
+        .then((bills) => {
+          const tableBody = document.querySelector("#billTable tbody")
+          bills.forEach((bill) => {
+            const row = `
+            <tr>
+              <td>${bill.billNumber}</td>
+              <td>${bill.customerName}</td>
+              <td>${bill.customerContact}</td>
+              <td>${new Date(bill.date).toLocaleString()}</td>
+              <td>₹${bill.total}</td>
+            </tr>`
+            tableBody.innerHTML += row
+          })
+        })
+        .catch((err) => {
+          console.error("Error fetching bills:", err)
+        })
+    </script>
+  </body>
+</html>

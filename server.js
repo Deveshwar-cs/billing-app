@@ -48,6 +48,17 @@ app.post("/api/bill", async (req, res) => {
   }
 })
 
+// 🆕 Get all bills
+app.get("/api/bills", async (req, res) => {
+  try {
+    const bills = await Bill.find().sort({date: -1}) // latest first
+    res.json(bills)
+  } catch (err) {
+    console.error("❌ Failed to fetch bills:", err)
+    res.status(500).json({message: "Error retrieving bills"})
+  }
+})
+
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`)
 })
