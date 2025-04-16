@@ -2,55 +2,197 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Billing Software</title>
-    <link rel="stylesheet" href="/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+
+      h2,
+      h3 {
+        text-align: center;
+      }
+
+      #output {
+        white-space: pre-wrap;
+      }
+    </style>
   </head>
-  <body>
-    <h2>Billing Form</h2>
-    <div>
-      <label>Customer Name:</label>
-      <input id="custName" placeholder="Customer Name" type="text" />
+  <body class="bg-light py-4">
+    <div class="container">
+      <h2 class="mb-4">Billing Form</h2>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Customer Name:</label>
+          <input
+            id="custName"
+            placeholder="Customer Name"
+            type="text"
+            class="form-control"
+          />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Phone:</label>
+          <input
+            id="custPhone"
+            placeholder="Customer Phone"
+            type="text"
+            class="form-control"
+          />
+        </div>
+      </div>
+
+      <h3 class="mt-4">Items</h3>
+      <div class="table-responsive">
+        <table
+          id="itemTable"
+          class="table table-bordered text-center align-middle"
+        >
+          <thead class="table-light">
+            <tr>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input class="form-control item-name" /></td>
+              <td>
+                <input class="form-control item-qty" type="number" value="1" />
+              </td>
+              <td>
+                <input
+                  class="form-control item-price"
+                  type="number"
+                  value="0"
+                />
+              </td>
+              <td><span class="item-total">0</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mb-3">
+        <button onclick="addRow()" class="btn btn-success">+ Add Item</button>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label class="form-label">Discount:</label>
+          <input id="discount" type="number" value="0" class="form-control" />
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <h4>Subtotal: ₹<span id="subtotal">0</span></h4>
+        <h4>Tax (18%): ₹<span id="tax">0</span></h4>
+        <h2 class="fw-bold">Total: ₹<span id="total">0</span></h2>
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+        <button onclick="generateBill()" class="btn btn-primary">
+          Generate Bill
+        </button>
+        <a href="/history.html" class="btn btn-secondary">History</a>
+      </div>
+
+      <pre id="output" class="bg-white p-3 mt-4 border rounded"></pre>
     </div>
-    <div>
-      <label>Phone:</label>
-      <input id="custPhone" placeholder="Customer Phone" type="text" />
-    </div>
 
-    <h3>Items</h3>
-    <table id="itemTable">
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>Qty</th>
-          <th>Price</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input class="item-name" /></td>
-          <td><input class="item-qty" type="number" value="1" /></td>
-          <td><input class="item-price" type="number" value="0" /></td>
-          <td><span class="item-total">0</span></td>
-        </tr>
-      </tbody>
-    </table>
-    <button onclick="addRow()">+ Add Item</button>
+    <script>
+      function addRow() {
+        const table = document
+          .getElementById("itemTable")
+          .getElementsByTagName("tbody")[0]
+        const row = table.insertRow()
 
-    <div>
-      <label>Discount:</label>
-      <input id="discount" type="number" value="0" />
-    </div>
+        const itemCell = row.insertCell(0)
+        const qtyCell = row.insertCell(1)
+        const priceCell = row.insertCell(2)
+        const totalCell = row.insertCell(3)
 
-    <h4>Subtotal: ₹<span id="subtotal">0</span></h4>
-    <h4>Tax (18%): ₹<span id="tax">0</span></h4>
-    <h2>Total: ₹<span id="total">0</span></h2>
+        itemCell.innerHTML = '<input class="form-control item-name" />'
+        qtyCell.innerHTML =
+          '<input class="form-control item-qty" type="number" value="1" />'
+        priceCell.innerHTML =
+          '<input class="form-control item-price" type="number" value="0" />'
+        totalCell.innerHTML = '<span class="item-total">0</span>'
 
-    <button onclick="generateBill()">Generate Bill</button>
-    <a href="/history.html"><button>History</button></a>
+        addInputListeners()
+      }
 
-    <pre id="output"></pre>
+      function calculateTotals() {
+        let subtotal = 0
+        const rows = document.querySelectorAll("#itemTable tbody tr")
+        rows.forEach((row) => {
+          const qty = Number(row.querySelector(".item-qty").value)
+          const price = Number(row.querySelector(".item-price").value)
+          const total = qty * price
+          row.querySelector(".item-total").textContent = total
+          subtotal += total
+        })
 
-    <script src="script.js"></script>
+        const discount = Number(document.getElementById("discount").value)
+        subtotal -= discount
+
+        const tax = subtotal * 0.18
+        const total = subtotal + tax
+
+        document.getElementById("subtotal").textContent = subtotal.toFixed(2)
+        document.getElementById("tax").textContent = tax.toFixed(2)
+        document.getElementById("total").textContent = total.toFixed(2)
+      }
+
+      function addInputListeners() {
+        const inputs = document.querySelectorAll(
+          ".item-qty, .item-price, #discount"
+        )
+        inputs.forEach((input) => {
+          input.removeEventListener("input", calculateTotals) // Avoid duplicates
+          input.addEventListener("input", calculateTotals)
+        })
+      }
+
+      function generateBill() {
+        calculateTotals()
+
+        const name = document.getElementById("custName").value
+        const phone = document.getElementById("custPhone").value
+        const subtotal = document.getElementById("subtotal").textContent
+        const tax = document.getElementById("tax").textContent
+        const total = document.getElementById("total").textContent
+
+        let output = `Customer: ${name}\nPhone: ${phone}\n\nItems:\n`
+
+        const rows = document.querySelectorAll("#itemTable tbody tr")
+        rows.forEach((row, index) => {
+          const item = row.querySelector(".item-name").value
+          const qty = row.querySelector(".item-qty").value
+          const price = row.querySelector(".item-price").value
+          const total = row.querySelector(".item-total").textContent
+          output += `${
+            index + 1
+          }. ${item} - Qty: ${qty}, Price: ₹${price}, Total: ₹${total}\n`
+        })
+
+        output += `\nSubtotal: ₹${subtotal}\nTax: ₹${tax}\nTotal: ₹${total}`
+
+        document.getElementById("output").textContent = output
+      }
+
+      // Run listeners on first load
+      window.onload = () => {
+        addInputListeners()
+      }
+    </script>
   </body>
 </html>
